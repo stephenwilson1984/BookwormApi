@@ -1,8 +1,8 @@
-﻿namespace Bookworm.Domain.Entities;
+﻿using Bookworm.Domain.Common;
 
-public class Book
+namespace Bookworm.Domain.Entities;
+
+public class Book : BaseAuditableEntity
 {
-    public int Id { get; set; }
-
-    public string Name { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 }

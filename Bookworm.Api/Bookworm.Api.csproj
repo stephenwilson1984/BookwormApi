@@ -13,4 +13,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Bookworm.Application\Bookworm.Application.csproj" />
+    <ProjectReference Include="..\Bookworm.Infrastructure\Bookworm.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

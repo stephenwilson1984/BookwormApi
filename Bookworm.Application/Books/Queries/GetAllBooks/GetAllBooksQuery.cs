@@ -1,26 +1,36 @@
-﻿using Bookworm.Application.Common.Interfaces;
+﻿using System.Data.Common;
+using Bookworm.Application.Common.Interfaces;
 using Bookworm.Application.Common.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Bookworm.Application.Books.Queries.GetAllBooks;
 
-public record GetAllBooksQuery : IRequest<GetAllBooksResponse>;
+public record GetAllBooksQuery : IRequest<Result<GetAllBooksResponse>>;
 
-public record GetAllBooksResponse(Result<List<BookDto>> Books);
+public record GetAllBooksResponse(List<BookDto> Books);
 
-public class GetAllBooksQueryHandler(IBookwormContext dbContext) : IRequestHandler<GetAllBooksQuery, GetAllBooksResponse>
+public class GetAllBooksQueryHandler(IBookRepository bookRepository, ILogger<GetAllBooksQueryHandler> logger) : IRequestHandler<GetAllBooksQuery, Result<GetAllBooksResponse>>
 {
-    public async Task<GetAllBooksResponse> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetAllBooksResponse>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(dbContext);
+        ArgumentNullException.ThrowIfNull(bookRepository);
 
-        var books = await dbContext.Books.Select(book => new BookDto
+        try
         {
-            Id = book.Id,
-            Name = book.Name
-        }).ToListAsync(cancellationToken);
+            var books = await bookRepository.GetAllBooks();
+            var booksDtos = books.Select(book => new BookDto
+            {
+                Id = book.Id,
+                Title = book.Title
+            }).ToList();
 
-        return new GetAllBooksResponse(Result<List<BookDto>>.Success(books));
+            return new SuccessResult<GetAllBooksResponse>(new GetAllBooksResponse(booksDtos));
+        }
+        catch (DbException e)
+        {
+            logger.LogError(e, "An exception occurred when retrieving all additives.  Error message: '{ErrorMessage}'.", e.Message);
+            return new DatabaseErrorResult<GetAllBooksResponse>(e);
+        }
     }
 }

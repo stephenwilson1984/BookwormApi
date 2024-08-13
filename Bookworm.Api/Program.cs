@@ -1,4 +1,10 @@
+using Bookworm.Application;
+using Bookworm.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 
@@ -21,4 +27,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

@@ -1,18 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bookworm.Application.Books.Queries.GetAllBooks;
+using Bookworm.Application.Common.Models;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bookworm.Api.Controllers;
 
 [ApiController]
 [Route("api/books")]
-public class BooksController : ControllerBase
+public class BooksController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public JsonResult GetBooks()
+    public async Task<IActionResult> GetBooks()
     {
-        return new JsonResult(new List<object>
+        var booksResult = await mediator.Send(new GetAllBooksQuery());
+
+        return booksResult switch
         {
-            new { Id = 1, Name = "The Old Man and the Sea" },
-            new { Id = 2, Name = "Of Mice and Men" }
-        });
+            SuccessResult<GetAllBooksResponse> successResult => new OkObjectResult(successResult.Data),
+            NotFoundErrorResult<GetAllBooksResponse> => new NotFoundResult(),
+            DatabaseErrorResult<GetAllBooksResponse> => new StatusCodeResult(500),
+            ErrorResult<GetAllBooksResponse> => new StatusCodeResult(500),
+            _ => new StatusCodeResult(500)
+        };
     }
 }
