@@ -1,25 +1,22 @@
 ﻿using Bookworm.Application.Common.Interfaces;
-using Bookworm.Application.Common.Options;
 using Bookworm.Domain.Entities;
-using Dapper;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bookworm.Infrastructure.Persistence.Repositories;
 
-public class BookRepository(IOptions<ConnectionStrings> options) : BaseRepository(options), IBookRepository
+public class BookRepository(IBookwormContext dbContext) : BaseRepository<Book>(dbContext), IBookRepository
 {
-    public async Task<IEnumerable<Book>> GetAllBooks()
+    public async Task<IEnumerable<Book>> GetAllBooksAsync(CancellationToken cancellationToken)
     {
-        await using var connection = new SqliteConnection(ConnectionString);
+        return await DbContext.Books
+            .Include(book => book.Author)
+            .ToListAsync(cancellationToken);
+    }
 
-        const string sql = """
-                           SELECT Id, Title
-                           FROM Books
-                           """;
-
-        var books = await connection.QueryAsync<Book>(sql);
-
-        return books;
+    public async Task<Book?> GetBookAsync(int id, CancellationToken cancellationToken)
+    {
+        return await DbContext.Books
+            .Include(book => book.Author)
+            .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 }

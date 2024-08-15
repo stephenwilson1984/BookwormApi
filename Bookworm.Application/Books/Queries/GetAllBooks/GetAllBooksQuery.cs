@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using Bookworm.Application.Authors;
 using Bookworm.Application.Common.Interfaces;
 using Bookworm.Application.Common.Models;
 using MediatR;
@@ -18,11 +19,17 @@ public class GetAllBooksQueryHandler(IBookRepository bookRepository, ILogger<Get
 
         try
         {
-            var books = await bookRepository.GetAllBooks();
+            var books = await bookRepository.GetAllBooksAsync(cancellationToken);
             var booksDtos = books.Select(book => new BookDto
             {
                 Id = book.Id,
-                Title = book.Title
+                Title = book.Title,
+                Author = new AuthorDto
+                {
+                    Id = book.Author.Id,
+                    Forename = book.Author.Forename,
+                    Surname = book.Author.Surname
+                }
             }).ToList();
 
             return new SuccessResult<GetAllBooksResponse>(new GetAllBooksResponse(booksDtos));

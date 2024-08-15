@@ -4,5 +4,7 @@ namespace Bookworm.Application.Common.Interfaces;
 
 public interface IBookRepository
 {
-    Task<IEnumerable<Book>> GetAllBooks();
+    Task<IEnumerable<Book>> GetAllBooksAsync(CancellationToken cancellationToken);
+
+    Task<Book?> GetBookAsync(int id, CancellationToken cancellationToken);
 }

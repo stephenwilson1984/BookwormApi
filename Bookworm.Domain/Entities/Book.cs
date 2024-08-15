@@ -4,5 +4,7 @@ namespace Bookworm.Domain.Entities;
 
 public class Book : BaseAuditableEntity
 {
-    public string Title { get; set; } = string.Empty;
+    public required string Title { get; set; }
+
+    public required Author Author { get; set; }
 }
