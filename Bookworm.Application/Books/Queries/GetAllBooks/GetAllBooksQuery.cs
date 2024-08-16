@@ -9,7 +9,7 @@ namespace Bookworm.Application.Books.Queries.GetAllBooks;
 
 public record GetAllBooksQuery : IRequest<Result<GetAllBooksResponse>>;
 
-public record GetAllBooksResponse(List<BookDto> Books);
+public record GetAllBooksResponse(IEnumerable<BookDto> Books);
 
 public class GetAllBooksQueryHandler(IBookRepository bookRepository, ILogger<GetAllBooksQueryHandler> logger) : IRequestHandler<GetAllBooksQuery, Result<GetAllBooksResponse>>
 {
@@ -30,13 +30,13 @@ public class GetAllBooksQueryHandler(IBookRepository bookRepository, ILogger<Get
                     Forename = book.Author.Forename,
                     Surname = book.Author.Surname
                 }
-            }).ToList();
+            });
 
             return new SuccessResult<GetAllBooksResponse>(new GetAllBooksResponse(booksDtos));
         }
         catch (DbException e)
         {
-            logger.LogError(e, "An exception occurred when retrieving all additives.  Error message: '{ErrorMessage}'.", e.Message);
+            logger.LogError(e, "An exception occurred when retrieving all books.  Error message: '{ErrorMessage}'.", e.Message);
             return new DatabaseErrorResult<GetAllBooksResponse>(e);
         }
     }

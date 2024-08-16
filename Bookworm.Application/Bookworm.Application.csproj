@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Books\Commands\" />
+    <Compile Remove="Books\Commands\**" />
+    <EmbeddedResource Remove="Books\Commands\**" />
+    <None Remove="Books\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authors\Queries\GetAllAuthors\" />
+    <Folder Include="Authors\Queries\GetAuthor\" />
     <Folder Include="Books\Queries\GetAllBooks\" />
     <Folder Include="Books\Queries\GetBook\" />
-    <Folder Include="Authors\" />
   </ItemGroup>
 
   <ItemGroup>
