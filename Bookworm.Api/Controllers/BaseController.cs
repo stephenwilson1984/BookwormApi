@@ -12,8 +12,8 @@ public class BaseController : ControllerBase
         return booksResult switch
         {
             SuccessResult<T> successResult => Ok(successResult.Data),
-            NotFoundErrorResult => NotFound(),
-            DatabaseErrorResult => StatusCode((int)HttpStatusCode.InternalServerError),
+            NotFoundErrorResult<T> => NotFound(),
+            DatabaseErrorResult<T> => StatusCode((int)HttpStatusCode.InternalServerError),
             ValidationErrorResult validationError => BadRequest(validationError),
             ErrorResult<T> => StatusCode((int)HttpStatusCode.InternalServerError),
             _ => StatusCode((int)HttpStatusCode.InternalServerError)
