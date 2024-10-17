@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Bookworm.Application.Books.Queries.GetBook;
 
-public record GetBookQuery(int Id) : IRequest<Result<GetBookResponse>>;
+public record GetBookQuery(int BookId) : IRequest<Result<GetBookResponse>>;
 
 public record GetBookResponse(BookDto Book);
 
@@ -19,11 +19,11 @@ public class GetBookQueryHandler(IBookRepository bookRepository, ILogger<GetBook
 
         try
         {
-            var book = await bookRepository.GetBookAsync(request.Id, cancellationToken);
+            var book = await bookRepository.GetBookAsync(request.BookId, cancellationToken);
 
             if (book is null)
             {
-                return new NotFoundErrorResult<GetBookResponse>($"Book with id {request.Id} was not found.");
+                return new NotFoundErrorResult<GetBookResponse>($"Book with id {request.BookId} was not found.");
             }
 
             var bookDto = new BookDto

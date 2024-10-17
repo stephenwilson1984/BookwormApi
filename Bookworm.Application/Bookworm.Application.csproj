@@ -15,7 +15,7 @@
   <ItemGroup>
     <Folder Include="Authors\Queries\GetAllAuthors\" />
     <Folder Include="Authors\Queries\GetAuthor\" />
-    <Folder Include="Books\Queries\GetAllBooks\" />
+    <Folder Include="Books\Queries\GetBooksByAuthor\" />
     <Folder Include="Books\Queries\GetBook\" />
   </ItemGroup>
 

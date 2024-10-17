@@ -1,5 +1,5 @@
-﻿using Bookworm.Application.Books.Queries.GetAllBooks;
-using Bookworm.Application.Books.Queries.GetBook;
+﻿using Bookworm.Application.Books.Queries.GetBook;
+using Bookworm.Application.Books.Queries.GetBooksByAuthor;
 using Bookworm.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bookworm.Api.Controllers;
 
 [ApiController]
-[Route("api/authors/{authorId}/books")]
+[Route("api/authors/{authorId:int}/books")]
 public class BooksController(IMediator mediator) : BaseController
 {
     [HttpGet]
-    public async Task<IActionResult> GetBooksAsync()
+    public async Task<IActionResult> GetBooksAsync(int authorId)
     {
-        var booksResult = await mediator.Send(new GetAllBooksQuery());
-        return ActionResult<Result<GetAllBooksResponse>>(booksResult);
+        var booksResult = await mediator.Send(new GetBooksByAuthorQuery(authorId));
+        return ActionResult<Result<GetBooksByAuthorResponse>>(booksResult);
     }
 
     [HttpGet("{id:int}")]
